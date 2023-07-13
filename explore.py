@@ -267,6 +267,42 @@ def quadratic_regression(X_train_mvp, y_train_mvp, X_validate_mvp, y_validate_mv
 
     return y_train_mvp, y_validate_mvp, rmse_train_mvp_quad, rmse_validate_mvp_quad, rmse_test_mvp_quad
 
+def metrics(rmse_train_mvp_median, rmse_validate_mvp_median, rmse_train_mvp_lm, rmse_validate_mvp_lm, rmse_train_mvp_lars, rmse_validate_mvp_lars, rmse_train_mvp_quad, rmse_validate_mvp_quad):
+    # metrics in a dataframe
+
+    metric_df = pd.DataFrame(data = [
+            {
+                "model": "mean_baseline",
+                "RMSE_train": rmse_train_mvp_median,
+                "RMSE_validate":rmse_validate_mvp_median,
+                "R2_train": 0,
+                "R2_validate": 0
+            },
+            {
+                "model": "Linear Regression",
+                "RMSE_train": rmse_train_mvp_lm,
+                "RMSE_validate":rmse_validate_mvp_lm,
+                "R2_train": (rmse_train_mvp_median - rmse_train_mvp_lm) / rmse_train_mvp_median,
+                "R2_validate": (rmse_train_mvp_median - rmse_validate_mvp_lm) / rmse_train_mvp_median
+            },
+            {
+                "model": "LassoLars alpha=10",
+                "RMSE_train": rmse_train_mvp_lars,
+                "RMSE_validate":rmse_validate_mvp_lars,
+                "R2_train": (rmse_train_mvp_median - rmse_train_mvp_lars) / rmse_train_mvp_median,
+                "R2_validate": (rmse_train_mvp_median - rmse_validate_mvp_lars) / rmse_train_mvp_median
+            },
+            {
+                "model": "Quadratic Regression",
+                "RMSE_train": rmse_train_mvp_quad,
+                "RMSE_validate":rmse_validate_mvp_quad,
+                "R2_train": (rmse_train_mvp_median - rmse_train_mvp_quad) / rmse_train_mvp_median,
+                "R2_validate": (rmse_train_mvp_median - rmse_validate_mvp_quad) / rmse_train_mvp_median
+            }
+    ])
+
+    return metric_df
+
 #Scale Function I used but took out of my final product as scaling had no effect or a negative effect depending on which test I used.
 def scale_zillow(df):
     # Split the Data
