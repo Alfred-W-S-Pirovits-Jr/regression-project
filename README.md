@@ -63,15 +63,31 @@ Github repo with the following:
 - Instructions or an explanation of how someone else can reproduce your project and findings (What would someone need to be able to recreate your project on their own?)
 - Key findings, recommendations, and takeaways from your project.
 
-2. Final Report (.ipynb)
 
-3. Acquire & Prepare Modules (.py)
+2. Acquire & Prepare Modules (.py) (COMBINED INTO A WRANGLE AS WELL)
+- Contains functions to acquire, prepare and split your data. You can have other .py files if you desire to abstract other code away from your final report.
+- Each of your functions are accompanied by descriptive docstrings. If they are functions you borrowed from instructors, put those docstrings in your own words.
+- Functions to acquire and prepare your data should be imported and used in your final report.
+- Your work must be reproducible by someone with their own env.py file.
 
+3. Final Report (.ipynb)
+- A Report that has filtered out all the extraneous elements not necessary to include in the report.
+- Use markdown throughout the notebook to guide the audience. Assume the reader will not read your code blocks as you think about how much markdown guidance do you need.
+- Then, assume another reader will read ALL of your code, so make sure it is clearly commented. All cells with code need comments.
+- Your notebook should begin with a project overview and goals
+- Exploration should be refined in the report because now you know which visualizations and tests led to valuable outcomes.
+- Include at least 4 visualizations in the form of:
+    Question in markdown that you want to answer
+    Visualization
+    Statistical test (in at least 2 of your 4)
+    Provide your clear answer or takeaway in markdown and natural language to the question based on your exploration.
+- Provide the context of the target variable through a visualization (distribution of the values, e.g.)
+- Include your 3 best models in the final notebook to review. Show the steps and code you went through to fit the models, evaluate, and select.
+- On your best model, a chart visualizing how it performed on test would be valuable.
+- End with a conclusion that talks about your original goals and how you reached those (or didn't), the key findings, recommendations and next steps ("If I had more time, I would...")
 
-4. Predictions (.csv).
-
-
-5. non-final Notebook(s) (.ipynb)
+4. non-final Notebook(s) (.ipynb)
+Additional non-final notebooks (.ipynb) may be created while working on the project, containing exploration, other work, or modeling work, but they will not be graded. All required elements must be in the final report notebook.
 
 
 
@@ -104,16 +120,6 @@ bedrooms	bathrooms	sqft	tax_value	year_built	tax_amount	Los Angeles	Orange	Ventu
 
 ***
 
-## <a name="wrangle"></a>Data Acquisition and Preparation
-[[Back to top](#top)]
-Basically I fumbled around until I figured it out little by litte.
-![]()
-
-
-### Wrangle steps: 
-
-
-*********************
 
 ## <a name="explore"></a>Data Exploration:
 [[Back to top](#top)]
