@@ -99,7 +99,7 @@ More time.  There is a lot of data to clean and analyze.  This is a much bigger 
 
 ## <a name="findings"></a>Key Findings, Recommendations and Takeaways:
 [[Back to top](#top)]
-The key findings are that the square footage, the number of bathrooms, and the number of bedrooms are highly correlated with the tax assessed value but they are also highly correlated with each other which may be affecting the ability of the model to do particularly well.  Though they are doing better than the baseline, the RMSE values are till not in any range that can be applied in the real world.  With the average home value around 527,143 and a median around 409,260, having an RMSE of around 487,522 renders this model practically meaningless.  Much more work and exploration are required to build a model which would be helpful.  The main takeaway is still that I need to first focus on making an MVP fefore trying to be perfect.
+The key findings are that the square footage, the number of bathrooms, and the number of bedrooms are highly correlated with the tax assessed value but they are also highly correlated with each other which may be affecting the ability of the model to do particularly well.  Though they are doing better than the baseline, the RMSE values are till not in any range that can be applied in the real world.  With the average home value around 771,278 and a median around 786,790, having an RMSE of around 487,522 renders this model practically meaningless.  Much more work and exploration are required to build a model which would be helpful.  The main takeaway is still that I need to first focus on making an MVP fefore trying to be perfect.
 
 ***
 
