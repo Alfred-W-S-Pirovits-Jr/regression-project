@@ -36,14 +36,16 @@ def plot_variable_pairs(df, sample_size=10000):
                 sns.lmplot(x=col, y=col2, data=df_sample, line_kws={'color': 'red'})
                 plt.show()
 
-#Plots catetorical and continuous variables with the non-dummified zillo_predictions as they are better for inter county analysis      
-    discrete_list = ['fips'] #took out fips
-    continuous_list = ['bedrooms', 'bathrooms', 'sqft', 'tax_value', 'year_built', 'tax_amount']
+
             
-def plot_categorical_and_continuous_vars(df, discrete_list, continuous_list, sample_size=10000):# lists of discrete and continuous columns:
+def plot_categorical_and_continuous_vars(df, sample_size=10000):# lists of discrete and continuous columns:
     wrangle.wrangle_zillow_predictions_without_drop()
     
-    
+    #Plots catetorical and continuous variables with the non-dummified zillo_predictions as they are better for inter county analysis      
+    discrete_list = ['fips'] #took out fips
+    continuous_list = ['bedrooms', 'bathrooms', 'sqft', 'tax_value', 'year_built', 'tax_amount']
+
+
     if sample_size < len(df):
         df_sample = df.sample(n=sample_size, random_state=823)
     else:
@@ -61,6 +63,8 @@ def plot_categorical_and_continuous_vars(df, discrete_list, continuous_list, sam
             plt.subplot(133)
             sns.barplot(x=discrete_col, y=continuous_col, data=df_sample)
 
+
+#Visualizes the correlations of the columns to all the other columns
 def correlation_heatmap(train):
     house_corr = train.corr()
 
@@ -76,6 +80,8 @@ def correlation_heatmap(train):
 
     plt.show()
 
+
+
 #Function to see what SelectKBest chooses as our n best features
 def select_kbest(X, y, n=2):
     f_selector = SelectKBest(f_regression, k=n)
@@ -90,6 +96,7 @@ def select_kbest(X, y, n=2):
     
     print(str(len(f_feature)), 'selected features')
     print(f_feature)
+
 
 #Function to see what RFE chooses as our n best features
 
@@ -110,6 +117,8 @@ def rfe(X, y, n=2):
     print(str(len(rfe_features)), 'selected features')
     print(rfe_features)
 
+
+
 #Split the mvp zillow_predictions
 def mvp_split(train, validate, test):
     train_mvp = train.drop(columns=['year_built', 'tax_amount']) #took out fips
@@ -126,28 +135,6 @@ def mvp_split(train, validate, test):
     y_test_mvp = test_mvp['tax_value']
 
     return X_train_mvp, y_train_mvp, X_validate_mvp, y_validate_mvp, X_test_mvp, y_test_mvp
-
-def linear_regression(y_train_mvp, y_validate_mvp, y_test_mvp):
-#. Create the model object
-    lm_mvp = LinearRegression()
-
-    #. Fit to training and specify column in y_train since it is now a series
-    lm_mvp.fit(X_train_mvp, y_train_mvp.tax_value)
-
-    # predict
-    y_train_mvp['tax_value_pred_lm'] = lm_mvp.predict(X_train_mvp)
-
-    # RMSE
-    rmse_train_mvp = mean_squared_error(y_train_mvp.tax_value, y_train_mvp.tax_value_pred_lm) ** (1/2)
-
-    # predict validate
-    y_validate_mvp['tax_value_pred_lm'] = lm_mvp.predict(X_validate_mvp)
-
-    #Validate RMSE 
-    rmse_validate_mvp = mean_squared_error(y_validate_mvp.tax_value, y_validate_mvp.tax_value_pred_lm) ** (1/2)
-
-    print('RMSE for OLS using LinearRegression\nTraining/In-Sample: ', rmse_train_mvp,
-        '\nValidation/Out-of-Sample: ', rmse_validate_mvp)
 
 
 #Turns mvp splits into their dataframes and prints out RMSE
@@ -175,12 +162,110 @@ def baseline_rmse(y_train_mvp, y_validate_mvp, y_test_mvp):
         "\nValidate/Out-of-Sample: ", round(rmse_validate_mvp_mean, 2)) 
 
     # 4.  RMSE of tax_value_pred_median
-    rmse_train_mvp = mean_squared_error(y_train_mvp.tax_value, y_train_mvp.tax_value_pred_median) ** (1/2)
-    rmse_validate_mvp = mean_squared_error(y_validate_mvp.tax_value, y_validate_mvp.tax_value_pred_median) ** (1/2)
+    rmse_train_mvp_median = mean_squared_error(y_train_mvp.tax_value, y_train_mvp.tax_value_pred_median) ** (1/2)
+    rmse_validate_mvp_median = mean_squared_error(y_validate_mvp.tax_value, y_validate_mvp.tax_value_pred_median) ** (1/2)
 
-    print("RMSE using Median\nTrain/In-Sample: ", round(rmse_train_mvp, 2), 
-        "\nValidate/Out-of-Sample: ", round(rmse_validate_mvp, 2))
-    return y_train_mvp, y_validate_mvp, y_test_mvp, rmse_train_mvp_mean, rmse_validate_mvp_mean
+    print("RMSE using Median\nTrain/In-Sample: ", round(rmse_train_mvp_median, 2), 
+        "\nValidate/Out-of-Sample: ", round(rmse_validate_mvp_median, 2))
+    return y_train_mvp, y_validate_mvp, y_test_mvp, rmse_train_mvp_median, rmse_validate_mvp_median
+
+
+
+
+#Function for the Linear Regression
+def linear_regression(X_train_mvp, y_train_mvp, X_validate_mvp, y_validate_mvp):
+#. Create the model object
+    lm_mvp = LinearRegression()
+
+    #. Fit to training and specify column in y_train since it is now a series
+    lm_mvp.fit(X_train_mvp, y_train_mvp.tax_value)
+
+    # predict
+    y_train_mvp['tax_value_pred_lm'] = lm_mvp.predict(X_train_mvp)
+
+    # RMSE
+    rmse_train_mvp_lm = mean_squared_error(y_train_mvp.tax_value, y_train_mvp.tax_value_pred_lm) ** (1/2)
+
+    # predict validate
+    y_validate_mvp['tax_value_pred_lm'] = lm_mvp.predict(X_validate_mvp)
+
+    #Validate RMSE 
+    rmse_validate_mvp_lm = mean_squared_error(y_validate_mvp.tax_value, y_validate_mvp.tax_value_pred_lm) ** (1/2)
+
+    print('RMSE for OLS using LinearRegression\nTraining/In-Sample: ', rmse_train_mvp_lm,
+        '\nValidation/Out-of-Sample: ', rmse_validate_mvp_lm)
+
+    return y_train_mvp, y_validate_mvp, rmse_train_mvp_lm, rmse_validate_mvp_lm
+
+#Function to call lasso_lars
+def lasso_lars(X_train_mvp, y_train_mvp, X_validate_mvp, y_validate_mvp):
+    lars_mvp = LassoLars(alpha=10)
+
+    #. Fit to training and specify column in y_train since it is now a series
+    lars_mvp.fit(X_train_mvp, y_train_mvp.tax_value)
+
+    # predict
+    y_train_mvp['tax_value_pred_lars'] = lars_mvp.predict(X_train_mvp)
+
+    # RMSE
+    rmse_train_mvp_lars = mean_squared_error(y_train_mvp.tax_value, y_train_mvp.tax_value_pred_lars) ** (1/2)
+
+    # predict validate
+    y_validate_mvp['tax_value_pred_lars'] = lars_mvp.predict(X_validate_mvp)
+
+    #Validate RMSE 
+    rmse_validate_mvp_lars = mean_squared_error(y_validate_mvp.tax_value, y_validate_mvp.tax_value_pred_lars) ** (1/2)
+
+    print('RMSE  using LassoLars\nTraining/In-Sample: ', rmse_train_mvp_lars,
+        '\nValidation/Out-of-Sample: ', rmse_validate_mvp_lars,
+        '\With alpha= 10')
+    
+    return y_train_mvp, y_validate_mvp, rmse_train_mvp_lars, rmse_validate_mvp_lars
+
+
+#Function for the quadratic regression
+
+def quadratic_regression(X_train_mvp, y_train_mvp, X_validate_mvp, y_validate_mvp, X_test_mvp, y_test_mvp):
+    # make the polynomial features to get a new set of features
+    pf_mvp = PolynomialFeatures(degree=2)
+
+    # fit and transform X_train
+    X_train_degree2_mvp = pf_mvp.fit_transform(X_train_mvp)
+
+    # transform X_validate & X_test
+    X_validate_degree2_mvp = pf_mvp.transform(X_validate_mvp)
+    X_test_degree2_mvp = pf_mvp.transform(X_test_mvp)
+
+    # create the model object
+    lm2_mvp = LinearRegression()
+
+    # fit the model to our training data. We must specify the column in y_train, 
+    # since we have converted it to a dataframe from a series! 
+    lm2_mvp.fit(X_train_degree2_mvp, y_train_mvp.tax_value)
+
+    # predict train
+    y_train_mvp['tax_value_pred_poly'] = lm2_mvp.predict(X_train_degree2_mvp)
+
+    # evaluate: rmse
+    rmse_train_mvp_quad = mean_squared_error(y_train_mvp.tax_value, y_train_mvp.tax_value_pred_poly)**(1/2)
+
+    # predict validate
+    y_validate_mvp['tax_value_pred_poly'] = lm2_mvp.predict(X_validate_degree2_mvp)
+
+
+    # evaluate: rmse
+    rmse_validate_mvp_quad = mean_squared_error(y_validate_mvp.tax_value, y_validate_mvp.tax_value_pred_poly)**(1/2)
+
+    print("RMSE for Polynomial Model, degrees=", 2, "\nTraining/In-Sample: ", rmse_train_mvp_quad, 
+        "\nValidation/Out-of-Sample: ", rmse_validate_mvp_quad)
+    
+    # predict test
+    y_test_mvp['tax_value_pred_poly'] = lm2_mvp.predict(X_test_degree2_mvp)
+
+    # evaluate: rmse
+    rmse_test_mvp_quad = mean_squared_error(y_test_mvp.tax_value, y_test_mvp.tax_value_pred_poly)**(1/2)
+
+    return y_train_mvp, y_validate_mvp, rmse_train_mvp_quad, rmse_validate_mvp_quad, rmse_test_mvp_quad
 
 #Scale Function I used but took out of my final product as scaling had no effect or a negative effect depending on which test I used.
 def scale_zillow(df):
